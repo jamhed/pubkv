@@ -9,7 +9,8 @@ start(_Type, _Args) ->
    Dispatch = cowboy_router:compile([
       {'_', [
          {"/uuid", pubkv_http_handler, []},
-         {"/key/:uuid/:key", pubkv_http_handler, []}
+         {"/key/:uuid/:key", pubkv_http_handler, []},
+         {"/key/:uuid", pubkv_http_handler, []}
       ]}
    ]),
    {ok, _} =
