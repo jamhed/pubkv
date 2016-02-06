@@ -11,6 +11,7 @@
 
 setup_mnesia() ->
 	Nodes = [node()],
+	mnesia:stop(),
 	mnesia:create_schema(Nodes),
 	mnesia:start(),
 	mnesia:create_table(store, [
