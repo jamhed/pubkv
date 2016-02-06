@@ -24,4 +24,4 @@ $ curl -d "some data" $KV/key/$UUID/data
 $ curl $KV/key/$UUID/data
 ```
 
-Public beta available: kv.jamhed.tk
+Public beta available at: http://kv.jamhed.tk
