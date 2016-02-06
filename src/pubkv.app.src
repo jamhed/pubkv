@@ -1,0 +1,15 @@
+{application, pubkv, [
+   {description, "Public KV"},
+   {vsn, "0.0.1"},
+   {modules, []},
+   {registered, []},
+   {applications, [
+      kernel,
+      stdlib,
+      cowboy,
+      uuid,
+      sync
+   ]},
+   {mod, {pubkv_app, []}},
+   {env, []}
+]}.
