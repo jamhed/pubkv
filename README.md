@@ -43,34 +43,34 @@ Put
 ```sh
 curl -X PUT -H "Content-Type: application/json"  -d '{"key": "json data"}' $KV/key/$UUID/some-data
 curl -X PUT -H "Content-Type: application/json"  -d '{"key": "other data"}' $KV/key/$UUID/some-other-data
-Returns: HTTP 200, ok
 ```
+Returns: HTTP 200, ok
 
 List keys
 ----------
 ```sh
 curl $KV/key/$UUID
-Returns: HTTP 200, ["some-data", "some-other-data"] or []
 ```
+Returns: HTTP 200, ["some-data", "some-other-data"] or []
 
 Get
 ---
 ```sh
 $ curl $KV/key/$UUID/some-data
-Returns: HTTP 200, {"key": "json data"}
 ```
+Returns: HTTP 200, {"key": "json data"}
 ```sh
 $ curl $KV/key/$UUID/some-missing-key
-Returns: HTTP 404, not found
 ```
+Returns: HTTP 404, not found
 
 Delete
 ------
 ```sh
 $ curl -X DELETE $KV/key/$UUID/some-data
 $ curl -X DELETE $KV/key/$UUID
-Returns: HTTP 200, ok 
 ```
+Returns: HTTP 200, ok 
 
 Readonly Aliases
 ----------------
@@ -96,4 +96,4 @@ Therefore allowing use from everywhere.
 Closing words
 =============
 
-Public beta available at: http://kv.jamhed.tk
+Public beta available at: https://kv.jamhed.tk
