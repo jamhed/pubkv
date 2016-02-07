@@ -14,7 +14,6 @@ file_or_path([], Req) ->
 
 handle(Req, Opts) ->
 	File = file_or_path(Opts, Req),
-	?INFO("FILE: ~p", [File]),
 	F = fun (Socket, Transport) -> Transport:sendfile(Socket, "../../" ++ File) end,
 	Req2 = cowboy_req:set_resp_header(<<"content-type">>, <<"text/plain">>, Req),
 	Req3 = cowboy_req:set_resp_body_fun(F, Req2),
