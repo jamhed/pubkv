@@ -57,6 +57,14 @@ $ curl -X DELETE $KV/key/$UUID
 Returns: HTTP 200, ok 
 ```
 
+Readme Alias
+------------
+Create an UUID alias only for reading (write and delete take no effect)
+```
+$ ALIAS = `curl $KV/alias/$UUID`
+$ curl $KV/key/$ALIAS/some-data
+```
+
 Closing words
 =============
 

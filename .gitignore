@@ -2,3 +2,5 @@
 /.erlang.mk
 /deps
 /ebin
+pubkv.sublime-project
+pubkv.sublime-workspace

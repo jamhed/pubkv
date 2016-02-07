@@ -1,13 +1,8 @@
 -module(db).
--export([setup_mnesia/0, get_kv/2, set_kv/4, delete_k/2]).
+-export([setup_mnesia/1, get_kv/2, set_kv/4, delete_k/2]).
+-include("db.hrl").
 
--record(store, {id, uuid, key, type, value}).
-
-setup_mnesia() ->
-	Nodes = [node()],
-	mnesia:stop(),
-	mnesia:create_schema(Nodes),
-	mnesia:start(),
+setup_mnesia(Nodes) ->
 	mnesia:create_table(store, [
 		{disc_copies, Nodes},
 		{index, [uuid]},
