@@ -65,6 +65,19 @@ $ ALIAS = `curl $KV/alias/$UUID`
 $ curl $KV/key/$ALIAS/some-data
 ```
 
+CORS Support
+============
+
+Each OPTION request returns response with headers set:
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: VALUE_OF(Access-Control-Request-Method)
+Access-Control-Allow-Headers: VALUE_OF(Access-Control-Request-Headers)
+```
+
+Therefore allowing use from everywhere.
+
 Closing words
 =============
 

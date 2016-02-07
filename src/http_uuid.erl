@@ -7,8 +7,13 @@ init(_, Req, _Opts) -> {ok, Req, []}.
 
 handle(Req, State) ->
 	{Method, _} = cowboy_req:method(Req),
-	{Code, Type, Body} = handle_req(Method, Req),
-	{ok, cmon:set_response(Req, Code, Type, Body), State}.
+	case Method of
+		<<"OPTIONS">> ->
+			{ok, cmon:set_cors(Req), State};
+		_ ->
+			{Code, Type, Body} = handle_req(Method, Req),
+			{ok, cmon:set_response(Req, Code, Type, Body), State}
+	end.
 
 terminate(_Reason, _Req, _State) -> ok.
 
