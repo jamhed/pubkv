@@ -53,6 +53,7 @@ Delete
 ------
 ```
 $ curl -X DELETE $KV/key/$UUID/some-data
+$ curl -X DELETE $KV/key/$UUID
 Returns: HTTP 200, ok 
 ```
 
