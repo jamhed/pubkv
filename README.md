@@ -68,7 +68,7 @@ $ curl $KV/key/$ALIAS/some-data
 CORS Support
 ============
 
-Each OPTION request returns response with headers set:
+Each OPTIONS request returns response with headers set:
 ```
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Credentials: true
