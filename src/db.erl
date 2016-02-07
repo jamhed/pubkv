@@ -50,6 +50,14 @@ delete_k(Uuid, K) when is_binary(Uuid), is_binary(K) ->
 	end,
 	{atomic, ok} = mnesia:transaction(F),
 	{200, <<"text/plain">>, <<"ok">>};
+delete_k(Uuid, undefined) when is_binary(Uuid) ->
+	F = fun() ->
+		Keys = mnesia:select(store, [{#store{id='$1', uuid=Uuid, _='_'}, [], ['$1']}]),
+		lists:foreach(fun(K) -> mnesia:delete({store, K}) end, Keys),
+		ok
+	end,
+	{atomic, ok} = mnesia:transaction(F),
+	{200, <<"text/plain">>, <<"ok">>};
 delete_k(_, _) -> {406, <<"text/plain">>, <<"not acceptable">>}.
 
 -spec binary_join([binary()], binary()) -> binary().
