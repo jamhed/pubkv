@@ -16,14 +16,15 @@ check_uuid(Uuid) ->
 	end.
 
 set_response(Req, Code, Type, Body) ->
-	Req2 = cowboy_req:set_resp_header(<<"content-type">>, Type, Req),
+	Req1 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),
+	Req2 = cowboy_req:set_resp_header(<<"content-type">>, Type, Req1),
 	Req3 = cowboy_req:set_resp_body(Body, Req2),
 	{ok, Req4} = cowboy_req:reply(Code, Req3),
 	Req4.
 
 set_cors(Req) ->
-	{Method, _} = cowboy_req:header(<<"access-control-requst-method">>, Req, <<"*">>),
-	{Headers, _} = cowboy_req:header(<<"access-control-requst-headers">>, Req, <<"*">>),
+	{Method, _} = cowboy_req:header(<<"access-control-request-method">>, Req, <<"*">>),
+	{Headers, _} = cowboy_req:header(<<"access-control-request-headers">>, Req, <<"*">>),
 	Cors = [
 		{ <<"access-control-allow-origin">>, <<"*">> },
 		{ <<"access-control-allow-credentials">>, <<"true">> },
