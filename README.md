@@ -4,6 +4,21 @@ Public KV
 Suppose you want to store something from script running in browser, and then retrieve
 the value from somewhere else. This is a primitive key-value store exactly for that.
 
+Usage example (from browser):
+```
+function store(id, obj) {
+    $.ajax({
+        url: 'https://kv.jamhed.tk/key/bceea91e-d3a0-45fc-9a8a-5d8fdb6047f2/' + id,
+        type: 'PUT',
+        data: JSON.stringify(obj),
+        contentType: "application/json",
+        processData: false,
+    });
+}
+
+store('what-ever-key', { data: "value" });
+```
+
 Setup
 =====
 ```
