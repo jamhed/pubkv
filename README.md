@@ -34,8 +34,8 @@ _rel/pubkv_release/bin/pubkv_release start
 Use
 ===
 ```sh
-KV = http://kv.jamhed.tk | http://localhost:10080
-UUID = `curl $KV/uuid`
+KV=https://kv.jamhed.tk
+UUID=`curl $KV/uuid`
 ```
 
 Put
@@ -44,7 +44,20 @@ Put
 curl -X PUT -H "Content-Type: application/json"  -d '{"key": "json data"}' $KV/key/$UUID/some-data
 curl -X PUT -H "Content-Type: application/json"  -d '{"key": "other data"}' $KV/key/$UUID/some-other-data
 ```
-Returns: HTTP 200, ok
+Returns: HTTP 200, ok. Keys will be created with default TTL=24*3600 seconds (one day).
+
+Put with TTL
+------------
+```sh
+curl -X PUT -d data $KV/key/$UUID/some-key?ttl=60
+```
+TTL = Time To Live in seconds. Key will be deleted after TTL will expire.
+
+Persitent keys
+--------------
+```sh
+curl -X PUT -d data $KV/key/$UUID/some-key?ttl=keep
+```
 
 List keys
 ----------

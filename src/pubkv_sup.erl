@@ -7,6 +7,8 @@
 start_link() ->
 	supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
-init([]) ->
-	Procs = [],
-	{ok, {{one_for_one, 1, 5}, Procs}}.
+init(_Args) ->
+	SupFlags = #{strategy => one_for_one, intensity => 1, period => 5},
+	SrvCleanup = 
+		#{id => srv_cleanup, start => {srv_cleanup, start_link, []}, restart => permanent, type => worker, modules => [srv_cleanup]},
+	{ok, {SupFlags, [SrvCleanup]}}.

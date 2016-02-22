@@ -1,6 +1,12 @@
 -module(db).
--export([setup_mnesia/1, get_kv/2, set_kv/4, delete_k/2]).
+-export([setup_mnesia/1, get_kv/2, set_kv/5, delete_k/2, delete_k/1, get_obsolete/0]).
+-export([get_obsolete/1, default_ttl/0, all/0]).
+-include_lib("stdlib/include/qlc.hrl").
 -include("db.hrl").
+
+-define(DEFAULT_TTL, 24*3600).
+
+default_ttl() -> ?DEFAULT_TTL.
 
 setup_mnesia(Nodes) ->
 	mnesia:create_table(store, [
@@ -14,37 +20,33 @@ get_kv(Uuid, Key) when is_binary(Uuid), is_binary(Key) ->
 		mnesia:select(store, [{#store{id={Uuid,Key}, _='_', type='$1', value='$2'}, [], [['$1','$2']]}])
 	end,
 	{atomic, V} = mnesia:transaction(F),
-	case V of
-		[] -> {404, <<"text/plain">>, <<"not found">>};
-		[[Type, Value]] -> {200, Type, Value}
-	end;
+	{key, V};
+
 get_kv(Uuid, undefined) when is_binary(Uuid) ->
 	F = fun() ->
 		mnesia:select(store, [{#store{uuid=Uuid, _='_', key='$1'}, [], ['$1']}])
 	end,
 	{atomic, V} = mnesia:transaction(F),
-	case V of
-		[] -> {200, <<"application/json">>, <<"[]">>};
-		List ->
-			Join = binary_join(lists:map(fun(B) -> <<"\"", B/binary, "\"">> end, List), <<",">>),
-			{200, <<"application/json">>, <<"[", Join/binary, "]">>}
-	end;
-get_kv(_, _) -> {406, <<"text/plain">>, <<"not acceptable">>}.
+	{list, V};
+get_kv(_, _) -> error.
 
-set_kv(Uuid, Key, Type, Data) when is_binary(Uuid), is_binary(Key), is_binary(Type), is_binary(Data) ->
+set_kv(Uuid, Key, Type, Data, TTL) when is_binary(Uuid), is_binary(Key), is_binary(Type), is_binary(Data) ->
 	F = fun() ->
-		mnesia:write(#store{id={Uuid,Key}, uuid=Uuid, key=Key, type=Type, value=Data})
+		mnesia:write(#store{id={Uuid,Key}, uuid=Uuid, key=Key, type=Type, value=Data, ttl=TTL, stamp=util:now_to_sec()})
 	end,
 	{atomic, ok} = mnesia:transaction(F),
-	{200, <<"text/plain">>, <<"ok">>};
-set_kv(_ , _, _, _ ) -> {406, <<"text/plain">>, <<"not acceptable">>}.
+	ok;
+set_kv(_ , _, _, _, _) -> error.
+
+delete_k(Id = {_Uuid, _Key}) ->
+	mnesia:transaction(fun() -> mnesia:delete({store, Id}) end).
 
 delete_k(Uuid, K) when is_binary(Uuid), is_binary(K) ->
 	F = fun() ->
 		mnesia:delete({store, {Uuid, K}})
 	end,
 	{atomic, ok} = mnesia:transaction(F),
-	{200, <<"text/plain">>, <<"ok">>};
+	ok;
 delete_k(Uuid, undefined) when is_binary(Uuid) ->
 	F = fun() ->
 		Keys = mnesia:select(store, [{#store{id='$1', uuid=Uuid, _='_'}, [], ['$1']}]),
@@ -52,17 +54,18 @@ delete_k(Uuid, undefined) when is_binary(Uuid) ->
 		ok
 	end,
 	{atomic, ok} = mnesia:transaction(F),
-	{200, <<"text/plain">>, <<"ok">>};
-delete_k(_, _) -> {406, <<"text/plain">>, <<"not acceptable">>}.
+	ok;
+delete_k(_, _) -> error.
 
--spec binary_join([binary()], binary()) -> binary().
-binary_join([], _Sep) -> <<>>;
-binary_join([Part], _Sep) -> Part;
-binary_join(List, Sep) ->
-	lists:foldr(
-	fun(A, B) ->
-		if
-			bit_size(B) > 0 -> <<A/binary, Sep/binary, B/binary>>;
-			true -> A
-		end
-	end, <<>>, List).
+get_obsolete() -> get_obsolete(util:now_to_sec()).
+
+-spec get_obsolete(Time::non_neg_integer()) -> [#store{}].
+get_obsolete(Time) ->
+	Q = qlc:q([ Id || #store{id=Id} = #store{stamp=Stamp, ttl=TTL} <- mnesia:table(store), is_integer(TTL), Stamp + TTL < Time]),
+	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
+	Records.
+
+all() ->
+	Q = qlc:q([ S || S <- mnesia:table(store)]),
+	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
+	Records.
