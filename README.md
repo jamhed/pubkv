@@ -2,7 +2,7 @@ Public KV
 =========
 
 Suppose you want to store something from script running in browser, and then retrieve
-the value from somewhere else. This is a primitive key-value store exactly for that.
+the value from somewhere else. This is a primitive key-value store exactly for that. Keys must not contain '/'.
 
 Usage example (from browser):
 ```javascript
