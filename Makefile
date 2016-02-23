@@ -1,6 +1,6 @@
 PROJECT = pubkv
-DEPS = cowboy uuid sync
+DEPS = cowboy uuid
 PROJECT_DESCRIPTION = Public KV
-PROJECT_VERSION = 0.0.1
+PROJECT_VERSION = 0.0.2
 
 include erlang.mk
