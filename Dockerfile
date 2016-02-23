@@ -3,18 +3,17 @@
 FROM alpine:3.3
 MAINTAINER Andrey Arapov <andrey.arapov@nixaid.com>
 
-RUN apk update \
-    && apk add grep git make perl \
-      ncurses-libs ncurses-terminfo ncurses-terminfo-base ca-certificates openssl libssh2 \
-      erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
-      erlang-mnesia erlang-crypto erlang-sasl
-
 ENV HOME /home/user
 ENV USERNAME user
 ENV SRCDIR /src
-RUN adduser -D $USERNAME
 
-RUN mkdir -p $SRCDIR \
+RUN adduser -D $USERNAME \
+    && apk update \
+    && apk add grep git make perl \
+      ncurses-libs ncurses-terminfo ncurses-terminfo-base ca-certificates openssl libssh2 \
+      erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
+      erlang-mnesia erlang-crypto erlang-sasl \
+    && mkdir -p $SRCDIR \
     && cd $SRCDIR \
     && git clone https://github.com/jamhed/pubkv.git \
     && cd $SRCDIR/pubkv \
