@@ -54,7 +54,6 @@ mkdir Mnesia
 docker run -td -v $(pwd)/Mnesia:/src/pubkv/_rel/pubkv_release/Mnesia -p 10080:10080 jamhed/pubkv:latest
 ```
 
-
 API
 ===
 
