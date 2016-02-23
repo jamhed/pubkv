@@ -3,7 +3,10 @@
 -export([init/3, handle/2, terminate/3]).
 -include("db.hrl").
 
-init(_, Req, _Opts) -> {ok, Req, []}.
+-record(state, {hash=none}).
+
+init(_, Req, [Hash]) -> {ok, Req, #state{hash=Hash}};
+init(_, Req, []) -> {ok, Req, #state{}}.
 
 handle(Req, State) ->
 	{Method, _} = cowboy_req:method(Req),
@@ -11,75 +14,44 @@ handle(Req, State) ->
 		<<"OPTIONS">> ->
 			{ok, cmon:set_cors(Req), State};
 		_ ->
-			{Code, Type, Body} = wrap_handle_req(Method, Req),
+			{Code, Type, Body} = wrap_handle_req(Method, Req, State),
 			{ok, cmon:set_response(Req, Code, Type, Body), State}
 	end.
 
-wrap_handle_req(Method, Req) ->
-	try handle_req(Method, Req) of
+wrap_handle_req(Method, Req, State) ->
+	try handle_req(Method, Req, State) of
 		Re -> Re
 	catch
 		C:E ->
 			?INFO("error ~p ~p ~p", [C, E, erlang:get_stacktrace()]),
-			wrap_response(error)
+			cmon:wrap_response(error)
 	end.
 
 terminate(_Reason, _Req, _State) -> ok.
 
-wrap_key_response({key, V}) ->
-	case V of
-		[] -> {404, <<"text/plain">>, <<"not found">>};
-		[[Type, Value]] -> {200, Type, Value}
-	end;
-wrap_key_response({list, V}) ->
-	case V of
-		[] -> {200, <<"application/json">>, <<"[]">>};
-		List ->
-			Join = util:binary_join(lists:map(fun(B) -> <<"\"", B/binary, "\"">> end, List), <<",">>),
-			{200, <<"application/json">>, <<"[", Join/binary, "]">>}
-	end;
-wrap_key_response(_) ->
-	{406, <<"text/plain">>, <<"not acceptable">>}.
+skey(none, _Uuid, Key) -> Key;
+skey(_, _Uuid, undefined) -> undefined;
+skey(sha256, Uuid, Key) when is_binary(Uuid), is_binary(Key) -> {hashed, crypto:hash(sha256, <<Uuid/binary, Key/binary>>)};
+skey(sha256, Uuid, Key) -> ?INFO("uuid:~p key:~p", [Uuid, Key]),  exit(bad_key_type).
 
-wrap_response(ok) ->
-	{200, <<"text/plain">>, <<"ok">>};
-wrap_response(_) ->
-	{406, <<"text/plain">>, <<"not acceptable">>}.
+handle_req(<<"GET">>, Req, #state{hash=Hash}) ->
+	{Uuid, Key} = cmon:get_uuid_and_key(Req),
+	cmon:wrap_key_response(db:get_kv(translate_ro(Uuid), skey(Hash, Uuid, Key)));
 
-handle_req(<<"GET">>, Req) ->
-	{Uuid, _} = cowboy_req:binding(uuid, Req),
-	{Key, _} = cowboy_req:binding(key, Req),
-	wrap_key_response(db:get_kv(translate_ro(cmon:check_uuid(Uuid)), Key));
+handle_req(<<"DELETE">>, Req, #state{hash=Hash}) ->
+	{Uuid, Key} = cmon:get_uuid_and_key(Req),
+	cmon:wrap_response(db:delete_k(Uuid, skey(Hash, Uuid, Key)));
 
-handle_req(<<"DELETE">>, Req) ->
-	{Uuid, _} = cowboy_req:binding(uuid, Req),
-	{Key, _} = cowboy_req:binding(key, Req),
-	wrap_response(db:delete_k(cmon:check_uuid(Uuid), Key));
-
-handle_req(<<"PUT">>, Req) ->
-	{Uuid, _} = cowboy_req:binding(uuid, Req),
-	{Key, _} = cowboy_req:binding(key, Req),
-	{Type, SubType} = get_content_type(Req),
+handle_req(<<"PUT">>, Req, #state{hash=Hash}) ->
+	{Uuid, Key} = cmon:get_uuid_and_key(Req),
+	{Type, SubType} = cmon:get_content_type(Req),
 	{ok, Data, _} = cowboy_req:body(Req),
-	Re = db:set_kv(cmon:check_uuid(Uuid), Key, <<Type/binary,"/",SubType/binary>>, Data, get_ttl(Req)),
-	wrap_response(Re);
+	Re = db:set_kv(Uuid, skey(Hash, Uuid, Key), <<Type/binary,"/",SubType/binary>>, Data, cmon:get_ttl(Req)),
+	cmon:wrap_response(Re);
 
-handle_req(Method, _Req) ->
+handle_req(Method, _Req, _State) ->
 	{405, <<"text/plain">>, <<"not supported method ", Method/binary>> }.
-
-get_content_type(Req) ->
-	case cowboy_req:parse_header(<<"content-type">>, Req) of
-		{ok, {Type, SubType, _}, _} -> {Type, SubType};
-		_ -> {<<"application">>, <<"octet-stream">>}
-	end.
-
-get_ttl(Req) -> 
-	{TTL, _} = cowboy_req:qs_val(<<"ttl">>, Req, erlang:integer_to_binary(db:default_ttl())),
-	case TTL of
-		<<"keep">> -> keep;
-		_ -> min(erlang:binary_to_integer(TTL), db:default_ttl())
-	end.
 
 translate_ro(Uuid) -> translate_ro(db_ro:translate(Uuid), Uuid).
 translate_ro([Uuid], _) -> Uuid;
-translate_ro([], Origin) -> Origin.
+translate_ro([], Origin) -> Origin. 

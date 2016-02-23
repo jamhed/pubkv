@@ -12,6 +12,8 @@ start(_Type, _Args) ->
 			{"/uuid", http_uuid, []},
 			{"/key/:uuid/:key", http_key, []},
 			{"/key/:uuid", http_key, []},
+			{"/skey/:uuid/:key", http_key, [sha256]},
+			{"/skey/:uuid", http_key, [sha256]},
 			{"/alias/:uuid", http_ro, []},
 			{'_', send_file, []}
 		]}

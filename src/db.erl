@@ -15,43 +15,41 @@ setup_mnesia(Nodes) ->
 		{attributes, record_info(fields, store)}
 	]).
 
-get_kv(Uuid, Key) when is_binary(Uuid), is_binary(Key) ->
+get_kv(Uuid, undefined) when is_binary(Uuid) ->
+	Q = qlc:q([ Key || #store{uuid=U, key=Key} <- mnesia:table(store), Uuid == U, is_binary(Key)]),
+	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
+	{list, Records};
+get_kv(Uuid, Key) when is_binary(Uuid) ->
 	F = fun() ->
 		mnesia:select(store, [{#store{id={Uuid,Key}, _='_', type='$1', value='$2'}, [], [['$1','$2']]}])
 	end,
 	{atomic, V} = mnesia:transaction(F),
 	{key, V};
-
-get_kv(Uuid, undefined) when is_binary(Uuid) ->
-	F = fun() ->
-		mnesia:select(store, [{#store{uuid=Uuid, _='_', key='$1'}, [], ['$1']}])
-	end,
-	{atomic, V} = mnesia:transaction(F),
-	{list, V};
 get_kv(_, _) -> error.
 
-set_kv(Uuid, Key, Type, Data, TTL) when is_binary(Uuid), is_binary(Key), is_binary(Type), is_binary(Data) ->
+set_kv(Uuid, Key, Type, Data, TTL) when is_binary(Uuid), is_binary(Type), is_binary(Data) ->
 	F = fun() ->
 		mnesia:write(#store{id={Uuid,Key}, uuid=Uuid, key=Key, type=Type, value=Data, ttl=TTL, stamp=util:now_to_sec()})
 	end,
 	{atomic, ok} = mnesia:transaction(F),
 	ok;
-set_kv(_ , _, _, _, _) -> error.
+set_kv(_Uuid, _Key, _Type, _Data, _TTL) -> ?INFO("set:~p", [_Key]), error.
 
 delete_k(Id = {_Uuid, _Key}) ->
-	mnesia:transaction(fun() -> mnesia:delete({store, Id}) end).
+	mnesia:transaction(fun() -> mnesia:delete({store, Id}) end);
+delete_k(WTF) -> ?INFO("wtf:~p", [WTF]).
 
-delete_k(Uuid, K) when is_binary(Uuid), is_binary(K) ->
-	F = fun() ->
-		mnesia:delete({store, {Uuid, K}})
-	end,
-	{atomic, ok} = mnesia:transaction(F),
-	ok;
 delete_k(Uuid, undefined) when is_binary(Uuid) ->
 	F = fun() ->
 		Keys = mnesia:select(store, [{#store{id='$1', uuid=Uuid, _='_'}, [], ['$1']}]),
 		lists:foreach(fun(K) -> mnesia:delete({store, K}) end, Keys),
 		ok
+	end,
+	{atomic, ok} = mnesia:transaction(F),
+	ok;
+delete_k(Uuid, K) when is_binary(Uuid) ->
+	F = fun() ->
+		mnesia:delete({store, {Uuid, K}})
 	end,
 	{atomic, ok} = mnesia:transaction(F),
 	ok;

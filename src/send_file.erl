@@ -4,7 +4,6 @@
 -define(INFO(S,A), error_logger:info_msg(S, A)).
 
 init(_, Req, Opts) ->
-	?INFO("OPTS: ~p", [Opts]),
 	{ok, Req, Opts}.
 
 file_or_path([File], _) -> File;

@@ -90,6 +90,16 @@ Persistent keys
 curl -X PUT -d data $KV/key/$UUID/some-key?ttl=keep
 ```
 
+Hidden keys
+-----------
+```sh
+curl -X PUT -d data $KV/skey/$UUID/hidden-key
+curl $KV/skey/$UUID/hidden-key
+curl -X DELETE $KV/skey/$UUID/hidden-key
+```
+Hidden keys (skey) are stored as sha256 hashes, and are not visible
+in keys list response to curl $KV/skey/$UUID.
+
 List keys
 ----------
 ```sh

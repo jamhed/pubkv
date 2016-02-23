@@ -1,6 +1,8 @@
 -module(cmon).
 -include("db.hrl").
 -export([uuid/0, uuid/1, check_uuid/1, set_response/4, set_cors/1]).
+-export([wrap_response/1, wrap_key_response/1]).
+-export([get_ttl/1, get_content_type/1, get_uuid_and_key/1]).
 
 uuid() ->
 	erlang:list_to_binary(uuid:uuid_to_string(uuid:get_v4(), standard)).
@@ -12,7 +14,7 @@ check_uuid(Uuid) ->
 	UuidBin = uuid:string_to_uuid(Uuid),
 	case uuid:is_v4(UuidBin) of
 		true -> UuidBin;
-		fasle -> false
+		_ -> false
 	end.
 
 set_response(Req, Code, Type, Body) ->
@@ -38,3 +40,41 @@ set_cors(Req) ->
 		Req, Cors),
 	{ok, Req2} = cowboy_req:reply(204, Req1),
 	Req2.
+
+wrap_key_response({key, V}) ->
+	case V of
+		[] -> {404, <<"text/plain">>, <<"not found">>};
+		[[Type, Value]] -> {200, Type, Value}
+	end;
+wrap_key_response({list, V}) ->
+	case V of
+		[] -> {200, <<"application/json">>, <<"[]">>};
+		List ->
+			Join = util:binary_join(lists:map(fun(B) -> <<"\"", B/binary, "\"">> end, List), <<",">>),
+			{200, <<"application/json">>, <<"[", Join/binary, "]">>}
+	end;
+wrap_key_response(_) ->
+	{406, <<"text/plain">>, <<"not acceptable">>}.
+
+wrap_response(ok) ->
+	{200, <<"text/plain">>, <<"ok">>};
+wrap_response(_) ->
+	{406, <<"text/plain">>, <<"not acceptable">>}.
+
+get_uuid_and_key(Req) ->
+	{Uuid, _} = cowboy_req:binding(uuid, Req),
+	{Key, _} = cowboy_req:binding(key, Req),
+	{check_uuid(Uuid), Key}.
+
+get_content_type(Req) ->
+	case cowboy_req:parse_header(<<"content-type">>, Req) of
+		{ok, {Type, SubType, _}, _} -> {Type, SubType};
+		_ -> {<<"application">>, <<"octet-stream">>}
+	end.
+
+get_ttl(Req) -> 
+	{TTL, _} = cowboy_req:qs_val(<<"ttl">>, Req, erlang:integer_to_binary(db:default_ttl())),
+	case TTL of
+		<<"keep">> -> keep;
+		_ -> min(erlang:binary_to_integer(TTL), db:default_ttl())
+	end.
