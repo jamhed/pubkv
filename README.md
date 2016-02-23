@@ -37,6 +37,7 @@ store('what-ever-key', { data: "value" });
 Setup
 =====
 ```sh
+# erlang must be installed (see docker image for mandatory erlang components)
 make
 ```
 
