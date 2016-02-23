@@ -47,8 +47,11 @@ Run
 _rel/pubkv_release/bin/pubkv_release start
 ```
 
-Use
+API
 ===
+
+Generate UUID
+-------------
 ```sh
 KV=https://kv.jamhed.tk
 UUID=`curl $KV/uuid`
