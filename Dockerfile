@@ -20,7 +20,9 @@ RUN mkdir -p $SRCDIR \
     && make \
     && make clean \
     && rm -rf $SRCDIR/pubkv/deps \
-    && apk del erlang-dev perl make git \
+    && apk del grep git make perl \
+      erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
+      erlang-mnesia erlang-crypto erlang-sasl \
     && chown -Rh $USERNAME:$USERNAME $SRCDIR/
 
 WORKDIR $HOME
