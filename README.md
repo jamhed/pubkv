@@ -53,8 +53,8 @@ curl -X PUT -d data $KV/key/$UUID/some-key?ttl=60
 ```
 TTL = Time To Live in seconds. Key will be deleted after TTL will expire.
 
-Persitent keys
---------------
+Persistent keys
+---------------
 ```sh
 curl -X PUT -d data $KV/key/$UUID/some-key?ttl=keep
 ```
