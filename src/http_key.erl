@@ -19,7 +19,9 @@ wrap_handle_req(Method, Req) ->
 	try handle_req(Method, Req) of
 		Re -> Re
 	catch
-		_:_ -> wrap_response(error)
+		C:E ->
+			?INFO("error ~p ~p ~p", [C, E, erlang:get_stacktrace()]),
+			wrap_response(error)
 	end.
 
 terminate(_Reason, _Req, _State) -> ok.
@@ -57,7 +59,7 @@ handle_req(<<"DELETE">>, Req) ->
 handle_req(<<"PUT">>, Req) ->
 	{Uuid, _} = cowboy_req:binding(uuid, Req),
 	{Key, _} = cowboy_req:binding(key, Req),
-	{ok, {Type, SubType, _}, _} = cowboy_req:parse_header(<<"content-type">>, Req),
+	{Type, SubType} = get_content_type(Req),
 	{ok, Data, _} = cowboy_req:body(Req),
 	Re = db:set_kv(cmon:check_uuid(Uuid), Key, <<Type/binary,"/",SubType/binary>>, Data, get_ttl(Req)),
 	wrap_response(Re);
@@ -65,8 +67,14 @@ handle_req(<<"PUT">>, Req) ->
 handle_req(Method, _Req) ->
 	{405, <<"text/plain">>, <<"not supported method ", Method/binary>> }.
 
+get_content_type(Req) ->
+	case cowboy_req:parse_header(<<"content-type">>, Req) of
+		{ok, {Type, SubType, _}, _} -> {Type, SubType};
+		_ -> {<<"application">>, <<"octet-stream">>}
+	end.
+
 get_ttl(Req) -> 
-	{TTL, _} = cowboy_req:qs_val(<<"ttl">>, Req, db:default_ttl()),
+	{TTL, _} = cowboy_req:qs_val(<<"ttl">>, Req, erlang:integer_to_binary(db:default_ttl())),
 	case TTL of
 		<<"keep">> -> keep;
 		_ -> min(erlang:binary_to_integer(TTL), db:default_ttl())
