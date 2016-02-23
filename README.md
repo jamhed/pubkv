@@ -51,8 +51,13 @@ Run (docker version)
 ====================
 ```sh
 mkdir Mnesia
-docker run -td -v $(pwd)/Mnesia:/src/pubkv/_rel/pubkv_release/Mnesia -p 10080:10080 jamhed/pubkv:latest
+docker run -td -v $(pwd)/Mnesia:/src/pubkv/_rel/pubkv_release/Mnesia -p 10080:10080 andrey01/pubkv:latest
 ```
+
+Live Demo
+=========
+[![asciicast](https://asciinema.org/a/br1h2k4a6alp1hs93w2xy2gay.png)](https://asciinema.org/a/br1h2k4a6alp1hs93w2xy2gay)
+
 
 API
 ===
