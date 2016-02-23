@@ -5,8 +5,9 @@ MAINTAINER Andrey Arapov <andrey.arapov@nixaid.com>
 
 RUN apk update \
     && apk add grep git make perl \
-               erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
-               erlang-mnesia erlang-crypto erlang-sasl
+      ncurses-libs ncurses-terminfo ncurses-terminfo-base ca-certificates openssl libssh2 \
+      erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
+      erlang-mnesia erlang-crypto erlang-sasl
 
 ENV HOME /home/user
 ENV USERNAME user
