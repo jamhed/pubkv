@@ -1,6 +1,21 @@
 Public KV
 =========
 
+Command line API
+----------------
+
+```sh
+KV=https://kv.jamhed.tk
+UUID=`curl $KV/uuid`
+curl -XPUT -d some-data $KV/key/$UUID/some-key
+# returns ok
+curl $KV/key/$UUID/some-key
+# returns some-data
+```
+
+In browser API
+--------------
+
 Suppose you want to store something from script running in browser, and then retrieve
 the value from somewhere else. This is a primitive key-value store exactly for that. Keys must not contain '/'.
 
@@ -69,19 +84,19 @@ Returns: HTTP 200, ["some-data", "some-other-data"] or []
 Get
 ---
 ```sh
-$ curl $KV/key/$UUID/some-data
+curl $KV/key/$UUID/some-data
 ```
 Returns: HTTP 200, {"key": "json data"}
 ```sh
-$ curl $KV/key/$UUID/some-missing-key
+curl $KV/key/$UUID/some-missing-key
 ```
 Returns: HTTP 404, not found
 
 Delete
 ------
 ```sh
-$ curl -X DELETE $KV/key/$UUID/some-data
-$ curl -X DELETE $KV/key/$UUID
+curl -X DELETE $KV/key/$UUID/some-data
+curl -X DELETE $KV/key/$UUID
 ```
 Returns: HTTP 200, ok 
 
@@ -89,8 +104,8 @@ Readonly Aliases
 ----------------
 Create an UUID alias only for reading (write and delete take no effect)
 ```sh
-$ ALIAS = `curl $KV/alias/$UUID`
-$ curl $KV/key/$ALIAS/some-data
+ALIAS=`curl $KV/alias/$UUID`
+curl $KV/key/$ALIAS/some-data
 ```
 
 CORS Support
