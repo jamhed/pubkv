@@ -6,7 +6,7 @@ Command line API
 
 ```sh
 KV=https://kv.jamhed.tk
-UUID=`curl $KV/uuid`
+UUID=`curl -s $KV/uuid`
 curl -XPUT -d some-data $KV/key/$UUID/some-key
 # returns ok
 curl $KV/key/$UUID/some-key
@@ -66,7 +66,7 @@ Generate UUID
 -------------
 ```sh
 KV=https://kv.jamhed.tk
-UUID=`curl $KV/uuid`
+UUID=`curl -s $KV/uuid`
 ```
 
 Put
@@ -130,7 +130,7 @@ Readonly Aliases
 ----------------
 Create an UUID alias only for reading (write and delete take no effect)
 ```sh
-ALIAS=`curl $KV/alias/$UUID`
+ALIAS=`curl -s $KV/alias/$UUID`
 curl $KV/key/$ALIAS/some-data
 ```
 
