@@ -47,11 +47,12 @@ Run
 _rel/pubkv_release/bin/pubkv_release start
 ```
 
-Run (docker version)
-====================
+Setup and run with Docker
+=========================
+You can either manually create a docker image from supplied docker-file, or to use an image from docker hub repository:
 ```sh
 mkdir Mnesia
-docker run -td -v $(pwd)/Mnesia:/src/pubkv/_rel/pubkv_release/Mnesia -p 10080:10080 andrey01/pubkv:latest
+docker run -td -v $(pwd)/Mnesia:/src/pubkv/_rel/pubkv_release/Mnesia -p 10080:10080 jamhed/pubkv
 ```
 
 Live Demo
@@ -153,3 +154,5 @@ Closing words
 Public beta available at: https://kv.jamhed.tk
 
 Source code: https://github.com/jamhed/pubkv
+
+Docker image: https://hub.docker.com/r/jamhed/pubkv/
