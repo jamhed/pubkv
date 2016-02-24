@@ -63,7 +63,8 @@ wrap_response(_) ->
 
 get_uuid_and_key(Req) ->
 	{Uuid, _} = cowboy_req:binding(uuid, Req),
-	{Key, _} = cowboy_req:binding(key, Req),
+	{PathInfo, _} = cowboy_req:path_info(Req),
+	Key = util:binary_join(PathInfo, <<"/">>),
 	{check_uuid(Uuid), Key}.
 
 get_content_type(Req) ->
