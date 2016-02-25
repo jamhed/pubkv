@@ -135,6 +135,16 @@ ALIAS=`curl -s $KV/alias/$UUID`
 curl $KV/key/$ALIAS/some-data
 ```
 
+Event API
+=========
+
+One can subscribe to UUID events delete and update, by using Server Side Events (SSE, EventSource)
+```sh
+curl $KV/watch/$UUID
+# update some/key
+# delete some/key
+```
+
 CORS Support
 ============
 
