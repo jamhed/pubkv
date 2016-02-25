@@ -32,12 +32,14 @@ set_kv(Uuid, Key, Type, Data, TTL) when is_binary(Uuid), is_binary(Type), is_bin
 		mnesia:write(#store{id={Uuid,Key}, uuid=Uuid, key=Key, type=Type, value=Data, ttl=TTL, stamp=util:now_to_sec()})
 	end,
 	{atomic, ok} = mnesia:transaction(F),
+	gen_event:notify(evh_uuid, {update, Uuid, Key}),
 	ok;
 set_kv(_Uuid, _Key, _Type, _Data, _TTL) -> ?INFO("set:~p", [_Key]), error.
 
-delete_k(Id = {_Uuid, _Key}) ->
-	mnesia:transaction(fun() -> mnesia:delete({store, Id}) end);
-delete_k(WTF) -> ?INFO("wtf:~p", [WTF]).
+delete_k(Id = {Uuid, Key}) ->
+	mnesia:transaction(fun() -> mnesia:delete({store, Id}) end),
+	gen_event:notify(evh_uuid, {delete, Uuid, Key}),
+	ok.
 
 delete_k(Uuid, undefined) when is_binary(Uuid) ->
 	F = fun() ->
@@ -48,11 +50,7 @@ delete_k(Uuid, undefined) when is_binary(Uuid) ->
 	{atomic, ok} = mnesia:transaction(F),
 	ok;
 delete_k(Uuid, K) when is_binary(Uuid) ->
-	F = fun() ->
-		mnesia:delete({store, {Uuid, K}})
-	end,
-	{atomic, ok} = mnesia:transaction(F),
-	ok;
+	delete_k({Uuid, K});
 delete_k(_, _) -> error.
 
 get_obsolete() -> get_obsolete(util:now_to_sec()).

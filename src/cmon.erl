@@ -2,7 +2,7 @@
 -include("db.hrl").
 -export([uuid/0, uuid/1, check_uuid/1, set_response/4, set_cors/1]).
 -export([wrap_response/1, wrap_key_response/1]).
--export([get_ttl/1, get_content_type/1, get_uuid_and_key/1]).
+-export([get_ttl/1, get_content_type/1, get_uuid_and_key/1, get_uuid/1]).
 
 uuid() ->
 	erlang:list_to_binary(uuid:uuid_to_string(uuid:get_v4(), standard)).
@@ -66,6 +66,10 @@ get_uuid_and_key(Req) ->
 	{PathInfo, _} = cowboy_req:path_info(Req),
 	Key = util:binary_join(PathInfo, <<"/">>),
 	{check_uuid(Uuid), Key}.
+
+get_uuid(Req) ->
+	{Uuid, _} = cowboy_req:binding(uuid, Req),
+	check_uuid(Uuid).
 
 get_content_type(Req) ->
 	case cowboy_req:parse_header(<<"content-type">>, Req) of

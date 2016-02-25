@@ -15,6 +15,7 @@ start(_Type, _Args) ->
 			{"/skey/:uuid/[...]", http_key, [sha256]},
 			{"/skey/:uuid", http_key, [sha256]},
 			{"/alias/:uuid", http_ro, []},
+			{"/watch/:uuid", http_sub, []},
 			{'_', send_file, []}
 		]}
 	]),
@@ -23,6 +24,7 @@ start(_Type, _Args) ->
 			[{port, 10080}],
 			[{env, [{dispatch, Dispatch}]}]
 		),
+	gen_event:start({local, evh_uuid}),
 	pubkv_sup:start_link().
 
 stop(_State) ->
