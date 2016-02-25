@@ -8,6 +8,9 @@ init([Pid, Uuid]) ->
 
 handle_event({Action, Uuid, Key}, S=#state{uuid=Uuid, pid=Pid}) ->
 	Pid ! {message, Action, Key},
+	{ok, S};
+
+handle_event(_, S=#state{}) ->
 	{ok, S}.
 
 terminate(_Args, _State) -> ok.
