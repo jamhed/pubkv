@@ -8,7 +8,7 @@ start(_Type, _Args) ->
 	db_mnesia:setup_mnesia(),
 	Dispatch = cowboy_router:compile([
 		{'_', [
-			{"/", send_file, ["README.md"]},
+			{"/", cowboy_static, {priv_file, pubkv, "README.md"}},
 			{"/uuid", http_uuid, []},
 			{"/key/:uuid/[...]", http_key, []},
 			{"/key/:uuid", http_key, []},
@@ -16,7 +16,7 @@ start(_Type, _Args) ->
 			{"/skey/:uuid", http_key, [sha256]},
 			{"/alias/:uuid", http_ro, []},
 			{"/watch/:uuid", http_sub, []},
-			{'_', send_file, []}
+			{"/[...]", cowboy_static, {priv_dir, pubkv, ""}}
 		]}
 	]),
 	{ok, _} =

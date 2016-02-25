@@ -12,7 +12,6 @@ init({_TransportName, _ProtocolName}, Req, []) ->
 	{loop, Req2, #state{}}.
 
 info({message, Action, Key}, Req, State) ->
-	?INFO("action: ~p key:~p~n", [Action, Key]),
 	ok = cowboy_req:chunk([erlang:atom_to_binary(Action, utf8), " ", Key, "\n\n"], Req),
 	{loop, Req, State}.
 
