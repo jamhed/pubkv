@@ -1,4 +1,0 @@
--name pubkv@127.0.0.1
--setcookie pubkv
--heart
--mnesia dir '"./Mnesia"'

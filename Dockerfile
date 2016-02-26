@@ -1,7 +1,7 @@
 # Run pubkv in a container
 
 FROM alpine:3.3
-MAINTAINER Andrey Arapov <andrey.arapov@nixaid.com>
+MAINTAINER Roman Galeev <jamhedd@gmail.com>
 
 ENV HOME /home/user
 ENV USERNAME user
@@ -27,4 +27,4 @@ RUN adduser -D $USERNAME \
 
 WORKDIR $HOME
 USER $USERNAME
-ENTRYPOINT [ "/src/pubkv/_rel/pubkv_release/bin/pubkv_release", "console" ]
+ENTRYPOINT [ "/src/pubkv/runner" ]

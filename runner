@@ -1,0 +1,10 @@
+#!/bin/sh
+COOKIE=$1
+if [ "$COOKIE" = "" ]
+then
+   COOKIE=pubkv
+fi
+IP=`hostname -i`
+NAME=`hostname`
+echo "-name $NAME@$IP\n-setcookie $COOKIE\n-mnesia dir '\"./Mnesia\"'\n" > _rel/pubkv_release/releases/1/vm.args
+_rel/pubkv_release/bin/pubkv_release console
