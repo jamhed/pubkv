@@ -38,7 +38,7 @@ Javascript application could subscribe to key update events, and do something wh
 Also applicable to server side actions, e.g. a server doing something when client updates the key,
 like putting data to some TSDB (time-series database) to have nice graphs.
 
-Possibly other
---------------
+Possibly other uses
+-------------------
 
 Impossible is nothing, so to say. Suggestions are welcome.
