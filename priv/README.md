@@ -4,7 +4,7 @@ Public KV
 FAQ
 ---
 
-Please see [FAQ](FAQ.md)
+Please see [FAQ](priv/FAQ.md)
 
 Command line API
 ----------------
