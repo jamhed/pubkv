@@ -16,25 +16,29 @@ few core operations and it is going to stay this way.
 4. Built-in replication and https support.
 
 What is it for (possible use cases)?
-------------------------------------
+====================================
 
-1. Data storage.
+Data storage
+------------
 
 Data could be stored from injected into browser javascript application (instead of localStorage),
 and later used from other places.
 
-2. Service discovery.
+Service discovery
+-----------------
 
 Keys with TTL allows to organize simple service discovery: services register itself at startup
 and update their registration regularly while service rounter uses this registry to route requests.
 Example is a number of REST microservices behind a common entry point.
 
-3. Event source.
+Event source
+------------
 
 Javascript application could subscribe to key update events, and do something when event happens.
 Also applicable to server side actions, e.g. a server doing something when client updates the key,
 like putting data to some TSDB (time-series database) to have nice graphs.
 
-4. Possibly other (impossible is nothing, so to say).
+Possibly other
+--------------
 
-Suggestions are welcome.
+Impossible is nothing, so to say. Suggestions are welcome.
