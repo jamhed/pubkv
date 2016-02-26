@@ -7,5 +7,9 @@ then
 fi
 IP=`hostname -i`
 NAME=`hostname`
-echo "-name $NAME@$IP\n-setcookie $COOKIE\n-mnesia dir '\"./Mnesia\"'\n" > _rel/pubkv_release/releases/1/vm.args
-_rel/pubkv_release/bin/pubkv_release console
+cat > _rel/pubkv_release/releases/1/vm.args <<EOL
+-name $NAME@$IP
+-setcookie $COOKIE
+-mnesia dir '\"./Mnesia\"'
+EOL
+exec _rel/pubkv_release/bin/pubkv_release console
