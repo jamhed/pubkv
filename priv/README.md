@@ -1,6 +1,11 @@
 Public KV
 =========
 
+FAQ
+---
+
+Please see [FAQ](FAQ.md)
+
 Command line API
 ----------------
 
