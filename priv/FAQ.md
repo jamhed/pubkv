@@ -6,8 +6,8 @@ Why?
 
 Why not.
 
-What the difference from ...?
------------------------------
+What is the difference from ...?
+--------------------------------
 
 1. Concurrency and scalability as properties of Erlang platform.
 2. Simplicity. There is no user registration nor authorization, and there are only
