@@ -6,8 +6,8 @@ Why?
 
 Why not.
 
-What the difference from ...?
------------------------------
+What is the difference from ...?
+--------------------------------
 
 1. Concurrency and scalability as properties of Erlang platform.
 2. Simplicity. There is no user registration nor authorization, and there are only
@@ -38,7 +38,7 @@ Javascript application could subscribe to key update events, and do something wh
 Also applicable to server side actions, e.g. a server doing something when client updates the key,
 like putting data to some TSDB (time-series database) to have nice graphs.
 
-Possibly other
---------------
+Possibly other uses
+-------------------
 
 Impossible is nothing, so to say. Suggestions are welcome.
