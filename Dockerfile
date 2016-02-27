@@ -17,7 +17,7 @@ RUN adduser -D $USERNAME \
     && cd pubkv \
     && make \
     && make clean \
-    && rm -rf $SRCDIR/pubkv/deps \
+    && rm -rf deps \
     && apk del grep git make perl \
       erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
       erlang-mnesia erlang-crypto erlang-sasl \
