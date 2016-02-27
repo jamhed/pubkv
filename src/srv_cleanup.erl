@@ -9,7 +9,12 @@
 -record(state, {}).
 
 start_link() ->
-	gen_server:start_link(?MODULE, [], []).
+   start_if_master(application:get_env(pubkv,type)).
+
+start_if_master({ok, master}) ->
+	gen_server:start_link(?MODULE, [], []);
+start_if_master(_) ->
+   ok.
 
 self_notify() ->
 	erlang:send_after(?CHECK_TIMEOUT, self(), {timeout}).
