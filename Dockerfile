@@ -23,6 +23,7 @@ RUN adduser -D $USERNAME \
       erlang-mnesia erlang-crypto erlang-sasl \
     && chown -Rh $USERNAME:$USERNAME $HOME
 
+ENV PATH "$HOME/pubkv/bin:$PATH"
 WORKDIR $HOME/pubkv
 USER $USERNAME
 ENTRYPOINT [ "runner" ]
