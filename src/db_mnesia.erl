@@ -19,7 +19,8 @@ setup_mnesia({ok, master}) ->
 	mnesia:start(),
 	db:setup_mnesia(Nodes),
 	db_ro:setup_mnesia(Nodes);
-setup_mnesia(_) -> skip.
+setup_mnesia(_) -> 
+	mnesia:start().
 
 get_slaves() ->
    get_slaves(application:get_env(pubkv,slaves)).
