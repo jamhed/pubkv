@@ -5,7 +5,6 @@ MAINTAINER Roman Galeev <jamhedd@gmail.com>
 
 ENV HOME /home/user
 ENV USERNAME user
-ENV SRCDIR /src
 
 RUN adduser -D $USERNAME \
     && apk update \
@@ -13,18 +12,17 @@ RUN adduser -D $USERNAME \
       ncurses-libs ncurses-terminfo ncurses-terminfo-base ca-certificates openssl libssh2 \
       erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
       erlang-mnesia erlang-crypto erlang-sasl \
-    && mkdir -p $SRCDIR \
-    && cd $SRCDIR \
+    && cd $HOME \
     && git clone https://github.com/jamhed/pubkv.git \
-    && cd $SRCDIR/pubkv \
+    && cd pubkv \
     && make \
     && make clean \
     && rm -rf $SRCDIR/pubkv/deps \
     && apk del grep git make perl \
       erlang erlang-dev erlang-asn1 erlang-public-key erlang-ssl \
       erlang-mnesia erlang-crypto erlang-sasl \
-    && chown -Rh $USERNAME:$USERNAME $SRCDIR/
+    && chown -Rh $USERNAME:$USERNAME $HOME
 
-WORKDIR $HOME
+WORKDIR $HOME/pubkv
 USER $USERNAME
-ENTRYPOINT [ "/src/pubkv/runner" ]
+ENTRYPOINT [ "runner" ]

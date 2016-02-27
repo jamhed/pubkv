@@ -1,8 +1,6 @@
 #!/bin/sh
-cd /src/pubkv
 TYPE=$1
 SLAVES=$2
-if [ "$TYPE" = "node" ]; then cat node-name; exit; fi
 if [ "$COOKIE" = "" ]; then COOKIE=pubkv; fi
 if [ "$TYPE" = "" ]; then TYPE=master; fi
 IP=`hostname -i`
