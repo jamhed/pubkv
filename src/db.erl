@@ -58,8 +58,10 @@ get_obsolete() -> get_obsolete(util:now_to_sec()).
 -spec get_obsolete(Time::non_neg_integer()) -> [#store{}].
 get_obsolete(Time) ->
 	Q = qlc:q([ Id || #store{id=Id} = #store{stamp=Stamp, ttl=TTL} <- mnesia:table(store), is_integer(TTL), Stamp + TTL < Time]),
-	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
-	Records.
+   case mnesia:transaction(fun() -> qlc:e(Q) end) of
+   	{atomic, Records} -> Records; 
+      _ -> []
+   end.
 
 all() ->
 	Q = qlc:q([ S || S <- mnesia:table(store)]),
