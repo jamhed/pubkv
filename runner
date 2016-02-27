@@ -5,7 +5,7 @@ SLAVES=$2
 if [ "$COOKIE" = "" ]; then COOKIE=pubkv; fi
 if [ "$TYPE" = "" ]; then TYPE=master; fi
 IP=`hostname -i`
-NAME=`hostname`
+NAME="$TYPE-`hostname`"
 cat > _rel/pubkv_release/releases/1/vm.args <<EOL
 -name $NAME@$IP
 -setcookie $COOKIE

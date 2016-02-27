@@ -1,12 +1,6 @@
 -module(db_ro).
--export([mk_alias/1, translate/1, setup_mnesia/1]).
+-export([mk_alias/1, translate/1]).
 -include("db.hrl").
-
-setup_mnesia(Nodes) ->
-	mnesia:create_table(alias, [
-		{disc_copies, Nodes},
-		{attributes, record_info(fields, alias)}
-	]).
 
 mk_alias(false) -> false;
 mk_alias(Uuid) when is_binary(Uuid) ->
