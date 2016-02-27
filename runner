@@ -1,10 +1,9 @@
 #!/bin/sh
 cd /src/pubkv
-COOKIE=$1
-if [ "$COOKIE" = "" ]
-then
-   COOKIE=pubkv
-fi
+TYPE=$1
+SLAVES=$2
+if [ "$COOKIE" = "" ]; then COOKIE=pubkv; fi
+if [ "$TYPE" = "" ]; then TYPE=master; fi
 IP=`hostname -i`
 NAME=`hostname`
 cat > _rel/pubkv_release/releases/1/vm.args <<EOL
@@ -12,4 +11,14 @@ cat > _rel/pubkv_release/releases/1/vm.args <<EOL
 -setcookie $COOKIE
 -mnesia dir '\"./Mnesia\"'
 EOL
+if [ "$TYPE" = "master" ]
+then
+   cat > _rel/pubkv_release/releases/1/sys.config << EOL
+[{ pubkv, [ {type,master}, {slaves,[$SLAVES]} ] }].
+EOL
+else
+   cat > _rel/pubkv_release/releases/1/sys.config << EOL
+[{ pubkv, [ {type,slave} ] }].
+EOL
+fi
 exec _rel/pubkv_release/bin/pubkv_release console
