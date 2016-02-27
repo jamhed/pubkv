@@ -2,6 +2,7 @@
 cd /src/pubkv
 TYPE=$1
 SLAVES=$2
+if [ "$TYPE" = "node" ]; then cat node-name; exit; fi
 if [ "$COOKIE" = "" ]; then COOKIE=pubkv; fi
 if [ "$TYPE" = "" ]; then TYPE=master; fi
 IP=`hostname -i`
@@ -13,12 +14,13 @@ cat > _rel/pubkv_release/releases/1/vm.args <<EOL
 EOL
 if [ "$TYPE" = "master" ]
 then
-   cat > _rel/pubkv_release/releases/1/sys.config << EOL
+	cat > _rel/pubkv_release/releases/1/sys.config << EOL
 [{ pubkv, [ {type,master}, {slaves,[$SLAVES]} ] }].
 EOL
 else
-   cat > _rel/pubkv_release/releases/1/sys.config << EOL
+	cat > _rel/pubkv_release/releases/1/sys.config << EOL
 [{ pubkv, [ {type,slave} ] }].
 EOL
 fi
+echo "$NAME@$IP" > node-name
 exec _rel/pubkv_release/bin/pubkv_release console
