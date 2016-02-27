@@ -140,6 +140,19 @@ ALIAS=`curl -s $KV/alias/$UUID`
 curl $KV/key/$ALIAS/some-data
 ```
 
+Replication
+===========
+
+You can run several copies of KV store, all of them synchronized. Here is an example with docker image:
+```sh
+docker run -td --name pubkv-slave-1 jamhed/pubkv slave
+SLAVE_NODE=`docker exec pubkv-slave-1 info`
+docker run -ti --name pubkv-master jmahed/pubkv master "'$SLAVE_NODE'"
+```
+
+After this two instances will be completely synchronized. If one goes down another will continue to work.
+You can have more than one slave node: master "'$SLAVE_NODE_1','$SLAVE_NODE_2'", and so on.
+
 Event API
 =========
 
