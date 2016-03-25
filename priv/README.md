@@ -147,7 +147,7 @@ You can run several copies of KV store, all of them synchronized. Here is an exa
 ```sh
 docker run -td --name pubkv-slave-1 jamhed/pubkv slave
 SLAVE_NODE=`docker exec pubkv-slave-1 info`
-docker run -ti --name pubkv-master jmahed/pubkv master "'$SLAVE_NODE'"
+docker run -ti --name pubkv-master jamhed/pubkv master "'$SLAVE_NODE'"
 ```
 
 After this two instances will be completely synchronized. If one goes down another will continue to work.
