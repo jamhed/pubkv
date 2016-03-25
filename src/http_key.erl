@@ -29,6 +29,7 @@ wrap_handle_req(Method, Req, State) ->
 
 terminate(_Reason, _Req, _State) -> ok.
 
+skey(_, _, <<"">>) -> undefined;
 skey(none, _Uuid, Key) -> Key;
 skey(_, _Uuid, undefined) -> undefined;
 skey(sha256, Uuid, Key) when is_binary(Uuid), is_binary(Key) -> {hashed, crypto:hash(sha256, <<Uuid/binary, Key/binary>>)};
