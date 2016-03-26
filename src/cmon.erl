@@ -44,7 +44,7 @@ set_cors(Req) ->
 wrap_key_response({key, V}) ->
 	case V of
 		[] -> {404, <<"text/plain">>, <<"not found">>};
-		[[undefined, Value]] -> {200, <<"application/octet-stream">>, Value};
+		[[undefined, Value]] -> {200, <<"application/json">>, Value};
 		[[Type, Value]] -> {200, Type, Value}
 	end;
 wrap_key_response({list, V}) ->
