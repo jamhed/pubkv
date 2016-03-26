@@ -14,6 +14,7 @@ start(_Type, _Args) ->
 			{"/key/:uuid", http_key, []},
 			{"/skey/:uuid/[...]", http_key, [sha256]},
 			{"/skey/:uuid", http_key, [sha256]},
+			{"/sha/[...]", http_sha, []},
 			{"/alias/:uuid", http_ro, []},
 			{"/watch/:uuid", http_sub, []},
 			{"/[...]", cowboy_static, {priv_dir, pubkv, ""}}

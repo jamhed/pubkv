@@ -2,9 +2,17 @@
 -record(store, {
 	id,
 	uuid,
-	stamp,
+	stamp = util:now_to_sec(),
 	ttl = 0,
 	key,
+	type,
+	value
+}).
+
+-record(sha, {
+	id,
+	stamp = util:now_to_sec(),
+	ttl = 0,
 	type,
 	value
 }).
