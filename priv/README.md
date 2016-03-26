@@ -140,6 +140,14 @@ ALIAS=`curl -s $KV/alias/$UUID`
 curl $KV/key/$ALIAS/some-data
 ```
 
+SHA256 keys
+-----------
+```sh
+curl -X PUT -d whateverdata $KV/sha/whateverkey
+curl -X GET $KV/sha/whateverkey
+curl -X DELETE $KV/sha/whateverkey
+```
+
 Replication
 ===========
 
