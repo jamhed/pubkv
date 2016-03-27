@@ -1,5 +1,5 @@
 -module(db).
--export([get_kv/2, set_kv/5, delete_k/2, delete_k/1, get_obsolete/0]).
+-export([get_kv/2, get_k_as_list/1, get_k_as_hash/1, set_kv/5, delete_k/2, delete_k/1, get_obsolete/0]).
 -export([get_obsolete/1, default_ttl/0, all/0]).
 -include_lib("stdlib/include/qlc.hrl").
 -include("db.hrl").
@@ -8,10 +8,16 @@
 
 default_ttl() -> ?DEFAULT_TTL.
 
-get_kv(Uuid, undefined) when is_binary(Uuid) ->
+get_k_as_hash(Uuid) when is_binary(Uuid) ->
+	Q = qlc:q([ {Key,Value} || #store{uuid=U, key=Key, value=Value} <- mnesia:table(store), Uuid == U, is_binary(Key)]),
+	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
+	{hash, Records}.
+
+get_k_as_list(Uuid) when is_binary(Uuid) ->
 	Q = qlc:q([ Key || #store{uuid=U, key=Key} <- mnesia:table(store), Uuid == U, is_binary(Key)]),
 	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
-	{list, Records};
+	{list, Records}.
+
 get_kv(Uuid, Key) when is_binary(Uuid) ->
 	F = fun() ->
 		mnesia:select(store, [{#store{id={Uuid,Key}, _='_', type='$1', value='$2'}, [], [['$1','$2']]}])

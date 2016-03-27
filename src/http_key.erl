@@ -35,9 +35,18 @@ skey(_, _Uuid, undefined) -> undefined;
 skey(sha256, Uuid, Key) when is_binary(Uuid), is_binary(Key) -> {hashed, crypto:hash(sha256, <<Uuid/binary, Key/binary>>)};
 skey(sha256, Uuid, Key) -> ?INFO("uuid:~p key:~p", [Uuid, Key]),  exit(bad_key_type).
 
-handle_req(<<"GET">>, Req, #state{hash=Hash}) ->
+handle_req(<<"GET">>, Req, #state{hash=HashType}) ->
 	{Uuid, Key} = cmon:get_uuid_and_key(Req),
-	cmon:wrap_key_response(db:get_kv(translate_ro(Uuid), skey(Hash, Uuid, Key)));
+	{Type, _} = cowboy_req:qs_val(<<"type">>, Req, <<"">>),
+	Re = case {Key, Type} of
+		{<<"">>, <<"hash">>} ->
+			db:get_k_as_hash(translate_ro(Uuid));
+		{<<"">>, _} ->
+			db:get_k_as_list(translate_ro(Uuid));
+		{_, _} -> 
+			db:get_kv(translate_ro(Uuid), skey(HashType, Uuid, Key))
+	end,
+	cmon:wrap_key_response(Re);
 
 handle_req(<<"DELETE">>, Req, #state{hash=Hash}) ->
 	{Uuid, Key} = cmon:get_uuid_and_key(Req),

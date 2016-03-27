@@ -50,9 +50,12 @@ wrap_key_response({key, V}) ->
 wrap_key_response({list, V}) ->
 	case V of
 		[] -> {200, <<"application/json">>, <<"[]">>};
-		List ->
-			Join = util:binary_join(lists:map(fun(B) -> <<"\"", B/binary, "\"">> end, List), <<",">>),
-			{200, <<"application/json">>, <<"[", Join/binary, "]">>}
+		List ->	{200, <<"application/json">>, jiffy:encode(List)}
+	end;
+wrap_key_response({hash, V}) ->
+	case V of
+		[] -> {200, <<"application/json">>, <<"{}">>};
+		Props -> {200, <<"application/json">>, jiffy:encode({Props})}
 	end;
 wrap_key_response(_) ->
 	{406, <<"text/plain">>, <<"not acceptable">>}.
