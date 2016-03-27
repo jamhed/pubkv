@@ -37,7 +37,7 @@ skey(sha256, Uuid, Key) -> ?INFO("uuid:~p key:~p", [Uuid, Key]),  exit(bad_key_t
 
 handle_req(<<"GET">>, Req, #state{hash=HashType}) ->
 	{Uuid, Key} = cmon:get_uuid_and_key(Req),
-	{Type, _} = cowboy_req:qs_val(<<"type">>, Req, <<"">>),
+	{Type, _} = cowboy_req:qs_val(<<"data">>, Req, <<"">>),
 	Re = case {Key, Type} of
 		{<<"">>, <<"hash">>} ->
 			db:get_k_as_hash(translate_ro(Uuid));
