@@ -51,7 +51,7 @@ wrap_key_response({hash, Props}) ->
 	case Props of
 		[] -> {200, <<"application/json">>, <<"[]">>};
 		List ->
-			Join = util:binary_join(lists:map(fun({K,V}) -> <<"\"", K/binary, "\": ", V/binary>> end, List), <<",">>),
+			Join = util:binary_join(lists:map(fun({K,V}) -> <<"\"", K/binary, "\":", V/binary>> end, List), <<",">>),
 			{200, <<"application/json">>, <<"{", Join/binary, "}">>}
 	end;
 wrap_key_response({list, V}) ->
