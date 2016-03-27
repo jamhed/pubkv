@@ -12,8 +12,7 @@
       ssl,
       cowboy,
       mnesia,
-      uuid,
-      jiffy
+      uuid
    ]},
    {mod, {pubkv_app, []}},
    {env, []}
