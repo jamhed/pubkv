@@ -20,6 +20,5 @@ RUN /root/build/build.sh
 USER $USERNAME
 WORKDIR $HOME/pubkv
 EXPOSE 10080
-VOLUME $HOME/pubkv/data
 
 ENTRYPOINT [ "/home/user/pubkv/bin/runner" ]
