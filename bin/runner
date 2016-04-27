@@ -8,7 +8,6 @@ NAME="$TYPE-`hostname`"
 cat > _rel/pubkv_release/releases/1/vm.args <<EOL
 -name $NAME@$IP
 -setcookie $COOKIE
--mnesia dir '\"./Mnesia\"'
 -mnesia dir '\"../../data/Mnesia\"'
 EOL
 if [ "$TYPE" = "master" ]
