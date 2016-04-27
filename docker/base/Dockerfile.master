@@ -7,8 +7,6 @@ ENV HOME=/home/user PATH=$PATH:/home/user/bin USERNAME=user
 
 COPY id_rsa* /root/.ssh/
 
-VOLUME $HOME/data
-
 COPY build/pre-setup.sh /root/build/pre-setup.sh
 RUN /root/build/pre-setup.sh
 
@@ -22,5 +20,6 @@ RUN /root/build/build.sh
 USER $USERNAME
 WORKDIR $HOME/pubkv
 EXPOSE 10080
+VOLUME $HOME/pubkv/data
 
 ENTRYPOINT [ "/home/user/pubkv/bin/runner" ]
