@@ -1,5 +1,5 @@
 -module(db_sha).
--export([set/2, get/1, delete/1, all/0]).
+-export([set/2, get/1, delete/1]).
 -include_lib("stdlib/include/qlc.hrl").
 -include("db.hrl").
 
@@ -22,8 +22,3 @@ get(Key) when is_binary(Key) ->
 delete(Key) when is_binary(Key) ->
 	mnesia:transaction(fun() -> mnesia:delete({sha, map_key(Key)}) end),
 	ok.
-
-all() ->
-	Q = qlc:q([ S || S <- mnesia:table(sha)]),
-	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
-	Records.

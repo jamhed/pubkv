@@ -1,6 +1,6 @@
 -module(db).
 -export([get_kv/2, get_k_as_list/1, get_k_as_hash/1, set_kv/5, delete_k/2, delete_k/1, get_obsolete/0]).
--export([get_obsolete/1, default_ttl/0, all/0]).
+-export([get_obsolete/1, default_ttl/0]).
 -include_lib("stdlib/include/qlc.hrl").
 -include("db.hrl").
 
@@ -61,8 +61,3 @@ get_obsolete(Time) ->
 		{atomic, Records} -> Records; 
 		_ -> []
 	end.
-
-all() ->
-	Q = qlc:q([ S || S <- mnesia:table(store)]),
-	{atomic, Records} = mnesia:transaction(fun() -> qlc:e(Q) end),
-	Records.

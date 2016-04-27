@@ -6,7 +6,8 @@ tables() ->
 	[
 		{store, [uuid], record_info(fields, store)},
 		{alias, [], record_info(fields, alias)},
-		{sha, [], record_info(fields, sha)}
+		{sha, [], record_info(fields, sha)},
+		{user, [facebook_id, email], record_info(fields, user)}
 	].
 
 create_tables() -> create_tables(tables()).

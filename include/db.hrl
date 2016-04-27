@@ -17,5 +17,12 @@
 	value
 }).
 
+-record(user, {
+	id,
+	email,
+	facebook_id,
+	password
+}).
+
 -define(INFO(S,A), error_logger:info_msg(S, A)).
 
