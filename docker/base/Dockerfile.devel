@@ -1,0 +1,26 @@
+FROM alpine:3.3
+MAINTAINER Roman Galeev <jamhedd@gmail.com>
+
+ARG BRANCH=master
+
+ENV HOME=/home/user PATH=$PATH:/home/user/bin USERNAME=user
+
+EXPOSE 8080
+
+COPY id_rsa* /root/.ssh/
+
+VOLUME $HOME/data
+
+COPY build/pre-setup.sh /root/build/pre-setup.sh
+RUN /root/build/pre-setup.sh
+
+COPY build/setup.sh /root/build/setup.sh
+RUN /root/build/setup.sh
+
+ADD version /version
+RUN /root/build/build.sh
+
+USER $USERNAME
+WORKDIR $HOME/backend
+
+ENTRYPOINT [ "runner" ]
