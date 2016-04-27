@@ -1,5 +1,5 @@
 -module(facebook).
--compile([auth]).
+-export([auth/2]).
 
 auth(Fbid, Token) when is_binary(Fbid), is_binary(Token) ->
 	Base = <<"https://graph.facebook.com/me?access_token=">>,
