@@ -1,0 +1,10 @@
+-name pubkv@127.0.0.1
+-setcookie pubkv
+-mnesia dir "'../../data/Mnesia'"
+-smp auto
++K true
++A 5
++sfwi 500
++scl false
++sbt db
++v
